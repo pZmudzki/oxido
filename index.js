@@ -9,11 +9,10 @@ const openai = new OpenAI({
 
 /**
  * Function to load article from file
- * @param {string} filePath
  * @returns {string} article content
  */
-const loadArticle = (filePath) => {
-  return fs.readFileSync(filePath, "utf-8");
+const loadArticle = () => {
+  return fs.readFileSync("./assets/article.txt", "utf-8");
 };
 
 /**
@@ -23,7 +22,11 @@ const loadArticle = (filePath) => {
  * @async
  */
 const generateHTML = async (articleContent) => {
-  const prompt = ` Generate HTML for this article with appropriate HTML tags. Include <img src="image_placeholder.jpg" alt="prompt to generate image" /> tags where images should go. Do not add any css or javascript. Return only article content without any <html>, <head> and <body> tags. Do not modify the article content. Do not add any text before nor after generated HTML.`;
+  const prompt = `Generate HTML for this article with appropriate semantic HTML tags. 
+                  Include <img src="image_placeholder.jpg" alt="{insert here a prompt for image generation}" /> tags where images should go. 
+                  Return only article content in plain text without any <html>, <head> and <body> tags. 
+                  Do not add any css or javascript.
+                  Do not modify the article content.`;
 
   const response = await openai.chat.completions.create({
     model: "gpt-4o",
@@ -39,17 +42,24 @@ const generateHTML = async (articleContent) => {
 };
 
 /**
+ * Function to save generated HTML to file
+ * @param {string} htmlContent
+ * @returns {void}
+ */
+const saveHTML = (htmlContent) => {
+  fs.writeFileSync("./assets/article.html", htmlContent);
+};
+
+/**
  * Main self invoked function
  * @returns {void}
  */
 (async function () {
   try {
-    const articlePath = "./article.txt";
-    const articleContent = loadArticle(articlePath);
-
+    const articleContent = loadArticle();
     const htmlContent = await generateHTML(articleContent);
-    console.log(htmlContent);
+    saveHTML(htmlContent);
   } catch (error) {
-    console.error("Błąd:", error);
+    console.error("Error:", error);
   }
 })();
