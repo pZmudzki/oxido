@@ -47,7 +47,7 @@ const generateHTML = async (articleContent) => {
  * @returns {void}
  */
 const saveHTML = (htmlContent) => {
-  fs.writeFileSync("./assets/article.html", htmlContent);
+  fs.writeFileSync("./assets/artykul.html", htmlContent);
 };
 
 /**
